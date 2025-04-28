@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Symptom Checker</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -122,32 +121,17 @@
             border-bottom-left-radius: 3px;
         }
 
-        /* Severity color coding */
-        .severity-low {
-            color: #2e7d32;
-            font-weight: 600;
-        }
-
-        .severity-medium {
-            color: #f9a825;
-            font-weight: 600;
-        }
-
-        .severity-high {
-            color: #c62828;
-            font-weight: 600;
-        }
-
-        /* Loading animation */
+        /* Typing indicator dots */
         .typing-indicator {
             display: flex;
             padding: 12px 18px;
+            align-items: center;
         }
 
         .typing-indicator span {
-            height: 10px;
-            width: 10px;
-            background-color: #a02d2d;
+            height: 8px;
+            width: 8px;
+            background-color: #777;
             border-radius: 50%;
             display: inline-block;
             margin: 0 2px;
@@ -168,34 +152,25 @@
 
         @keyframes typing {
             0% { opacity: 0.4; transform: translateY(0); }
-            50% { opacity: 1; transform: translateY(-5px); }
+            50% { opacity: 1; transform: translateY(-3px); }
             100% { opacity: 0.4; transform: translateY(0); }
         }
 
-        /* New styles for matching count and grouping */
-        .matching-count {
-            color: #777;
-            font-style: italic;
-            font-size: 0.9rem;
-            margin: 10px 0 5px 0;
-            text-align: center;
-        }
-
-        .typing-message {
-            color: #777;
-            font-style: italic;
-            font-size: 0.9rem;
+        /* Show more button styles */
+        .show-more-btn {
             padding: 8px 15px;
-            background-color: #f1f1f1;
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
             border-radius: 15px;
-            display: inline-block;
-            margin-bottom: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            transition: background-color 0.2s;
         }
-
-        .illness-group {
-            margin-bottom: 20px;
-            border-left: 3px solid #ddd;
-            padding-left: 10px;
+        
+        .show-more-btn:hover {
+            background-color: #d0d0d0;
         }
 
         /* Responsive adjustments */
@@ -229,11 +204,17 @@
     </div>
 
     <script>
-        // Function to send message
+        let allPossibleIllnesses = [];
+        let shownIllnessCount = 0;
+
         function sendMessage() {
             const input = document.getElementById('symptoms');
             const message = input.value.trim();
             if (message === '') return;
+
+            // Clear previous state
+            allPossibleIllnesses = [];
+            shownIllnessCount = 0;
 
             // Add user message to chat
             const chatMessages = document.getElementById('chat-messages');
@@ -248,16 +229,13 @@
             // Scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            // Add typing indicator
+            // Add typing indicator (just dots)
             const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'message bot';
+            typingIndicator.className = 'message bot typing-indicator';
             typingIndicator.innerHTML = `
-                <p class="typing-message">Typing...</p>
-                <div class="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+                <span></span>
+                <span></span>
+                <span></span>
             `;
             chatMessages.appendChild(typingIndicator);
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -275,80 +253,46 @@
                 // Remove typing indicator after delay
                 setTimeout(() => {
                     chatMessages.removeChild(typingIndicator);
-                    
-                    // Process the response
+
+                    // Parse the response
                     const responseText = data.result;
                     
-                    // Group illnesses by matching symptom count
-                    const illnessGroups = {};
-                    const matches = responseText.match(/Most likely illness:(.*?)Other possible illnesses:(.*)/s);
-                    
-                    if (matches) {
-                        const mainIllness = matches[1].trim();
-                        const otherIllnesses = matches[2].trim();
+                    // Extract most likely illness (assuming it's before "Other possible illnesses")
+                    const mostLikelyMatch = responseText.match(/Most likely illness:(.*?)(Other possible illnesses:|$)/s);
+                    if (mostLikelyMatch && mostLikelyMatch[1]) {
+                        const mostLikely = mostLikelyMatch[1].trim();
                         
-                        // Process main illness (usually highest count)
-                        if (mainIllness) {
-                            const countMatch = mainIllness.match(/\((\d+) symptoms?\)/);
-                            if (countMatch) {
-                                const count = countMatch[1];
-                                if (!illnessGroups[count]) {
-                                    illnessGroups[count] = [];
-                                }
-                                illnessGroups[count].push(mainIllness);
-                            }
+                        // Display most likely diagnosis
+                        const diagnosisMessage = document.createElement('div');
+                        diagnosisMessage.className = 'message bot';
+                        diagnosisMessage.innerHTML = `<p><strong>Most likely diagnosis:</strong><br>${mostLikely.replace(/\n/g, '<br>')}</p>`;
+                        chatMessages.appendChild(diagnosisMessage);
+                        
+                        // Check if there are other possible illnesses
+                        const otherIllnessesMatch = responseText.match(/Other possible illnesses:(.*)/s);
+                        if (otherIllnessesMatch && otherIllnessesMatch[1]) {
+                            // Store all possible illnesses
+                            allPossibleIllnesses = otherIllnessesMatch[1].split(/\n\n+/).filter(i => i.trim().length > 0);
+                            
+                            // Ask if user wants to see more
+                            const promptMessage = document.createElement('div');
+                            promptMessage.className = 'message bot';
+                            promptMessage.innerHTML = `
+                                <p>Would you like to see other possible conditions?</p>
+                                <button class="show-more-btn" onclick="showMoreIllnesses()">Show More Options</button>
+                            `;
+                            chatMessages.appendChild(promptMessage);
                         }
-                        
-                        // Process other illnesses
-                        const otherIllnessSections = otherIllnesses.split(/\n\n+/);
-                        otherIllnessSections.forEach(section => {
-                            const countMatch = section.match(/\((\d+) symptoms?\)/);
-                            if (countMatch) {
-                                const count = countMatch[1];
-                                if (!illnessGroups[count]) {
-                                    illnessGroups[count] = [];
-                                }
-                                illnessGroups[count].push(section);
-                            }
-                        });
+                    } else {
+                        // Fallback if parsing fails
+                        const fallbackMessage = document.createElement('div');
+                        fallbackMessage.className = 'message bot';
+                        fallbackMessage.innerHTML = `<p>${responseText.replace(/\n/g, '<br>')}</p>`;
+                        chatMessages.appendChild(fallbackMessage);
                     }
                     
-                    // Display grouped illnesses with delays between groups
-                    let delay = 0; // Start immediately after removing typing indicator
-                    
-                    // Sort groups by symptom count (descending)
-                    const sortedGroups = Object.entries(illnessGroups)
-                        .sort((a, b) => parseInt(b[0]) - parseInt(a[0]));
-                    
-                    sortedGroups.forEach(([count, illnesses]) => {
-                        setTimeout(() => {
-                            // Add matching count header
-                            const countHeader = document.createElement('div');
-                            countHeader.className = 'matching-count';
-                            countHeader.textContent = `(matching ${count} symptoms)`;
-                            chatMessages.appendChild(countHeader);
-                            
-                            // Add each illness in this group
-                            illnesses.forEach(illnessText => {
-                                const formattedIllness = illnessText
-                                    .replace(/Severity: Low/g, '<span class="severity-low">Severity: Low</span>')
-                                    .replace(/Severity: Medium/g, '<span class="severity-medium">Severity: Medium</span>')
-                                    .replace(/Severity: High/g, '<span class="severity-high">Severity: High</span>')
-                                    .replace(/\n/g, '<br>');
-                                
-                                const illnessGroup = document.createElement('div');
-                                illnessGroup.className = 'illness-group';
-                                illnessGroup.innerHTML = formattedIllness;
-                                chatMessages.appendChild(illnessGroup);
-                            });
-                            
-                            chatMessages.scrollTop = chatMessages.scrollHeight;
-                        }, delay);
-                        
-                        delay += 2000; // 2 second delay between groups
-                    });
-                    
-                }, 2000); // 2 second delay before showing first response
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1500);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -360,11 +304,44 @@
                     errorMessage.innerHTML = '<p>Sorry, there was an error processing your request. Please try again.</p>';
                     chatMessages.appendChild(errorMessage);
                     chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 2000);
+                }, 1500);
             });
         }
 
-        // Add event listener to input field to handle "Enter" key press
+        function showMoreIllnesses() {
+            const chatMessages = document.getElementById('chat-messages');
+            
+            // Remove the prompt message
+            const lastMessage = chatMessages.lastChild;
+            if (lastMessage.querySelector('.show-more-btn')) {
+                chatMessages.removeChild(lastMessage);
+            }
+            
+            // Show next 3 illnesses (or remaining ones)
+            const illnessesToShow = allPossibleIllnesses.slice(shownIllnessCount, shownIllnessCount + 3);
+            shownIllnessCount += illnessesToShow.length;
+            
+            illnessesToShow.forEach(illness => {
+                const illnessMessage = document.createElement('div');
+                illnessMessage.className = 'message bot';
+                illnessMessage.innerHTML = `<p>${illness.replace(/\n/g, '<br>')}</p>`;
+                chatMessages.appendChild(illnessMessage);
+            });
+            
+            // Add "Show More" button if there are more to show
+            if (shownIllnessCount < allPossibleIllnesses.length) {
+                const showMoreBtn = document.createElement('div');
+                showMoreBtn.className = 'message bot';
+                showMoreBtn.innerHTML = `
+                    <button class="show-more-btn" onclick="showMoreIllnesses()">Show More Options</button>
+                `;
+                chatMessages.appendChild(showMoreBtn);
+            }
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add event listener for Enter key
         document.getElementById('symptoms').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 sendMessage();
