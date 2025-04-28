@@ -139,7 +139,7 @@
         </div>
         <div id="chat-messages">
             <div class="message bot-message">
-                Welcome! Please describe your symptoms to get started.
+                Welcome to the symptom checker! I am your virtual assistant to help predict a diagnosis from symptoms you are experiencing. Diagnoses provided are merely suggestions, please seek professional assistance to receive an official diagnosis.
             </div>
         </div>
         <div class="chat-input">
@@ -271,7 +271,7 @@
             }
             
             // Show next 3 illnesses
-            const toShow = allPossibleIllnesses.slice(shownIllnessCount, shownIllnessCount + 3);
+            const toShow = allPossibleIllnesses.slice(shownIllnessCount, shownIllnessCount + 1);
             shownIllnessCount += toShow.length;
             
             toShow.forEach(illness => {
