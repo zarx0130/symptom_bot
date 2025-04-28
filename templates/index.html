@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="chat-input">
-            <input type="text" id="symptoms" placeholder="Enter your symptoms (comma-separated)">
+            <input type="text" id="symptoms" placeholder="Describe your symptoms (e.g., headache, fever, cough)">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
@@ -26,8 +26,8 @@
         // Function to send message
         function sendMessage() {
             const input = document.getElementById('symptoms');
-            const message = input.value;
-            if (message.trim() === '') return;
+            const message = input.value.trim();
+            if (message === '') return;
 
             // Add user message to chat
             const chatMessages = document.getElementById('chat-messages');
@@ -42,6 +42,19 @@
             // Scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
+            // Add typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message bot';
+            typingIndicator.innerHTML = `
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
             // Send message to server
             fetch('/', {
                 method: 'POST',
@@ -52,21 +65,35 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Introduce a delay before displaying the bot's response
-                setTimeout(() => {
-                    // Split the response into multiple parts
-                    const responses = data.result.split('\n\n\n');
-                    responses.forEach(response => {
-                        // Add each part as a separate bot message
-                        const botMessage = document.createElement('div');
-                        botMessage.className = 'message bot';
-                        botMessage.innerHTML = `<p>${response.replace(/\n/g, '<br>')}</p>`;
-                        chatMessages.appendChild(botMessage);
-                    });
+                // Remove typing indicator
+                chatMessages.removeChild(typingIndicator);
 
-                    // Scroll to bottom
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 2000); // 2000 milliseconds = 2 seconds delay
+                // Process and display the response with severity colors
+                const responseText = data.result;
+                const formattedResponse = responseText
+                    .replace(/Severity: Low/g, '<span class="severity-low">Severity: Low</span>')
+                    .replace(/Severity: Medium/g, '<span class="severity-medium">Severity: Medium</span>')
+                    .replace(/Severity: High/g, '<span class="severity-high">Severity: High</span>')
+                    .replace(/\n/g, '<br>');
+
+                // Add bot response
+                const botMessage = document.createElement('div');
+                botMessage.className = 'message bot';
+                botMessage.innerHTML = `<p>${formattedResponse}</p>`;
+                chatMessages.appendChild(botMessage);
+
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                chatMessages.removeChild(typingIndicator);
+                
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'message bot';
+                errorMessage.innerHTML = '<p>Sorry, there was an error processing your request. Please try again.</p>';
+                chatMessages.appendChild(errorMessage);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             });
         }
 
@@ -79,5 +106,3 @@
     </script>
 </body>
 </html>
-
-<!-- colors for severity ? -->
