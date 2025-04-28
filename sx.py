@@ -4,12 +4,22 @@ import pandas as pd
 from collections import defaultdict
 import difflib
 import re
+import os
 
 app = Flask(__name__)
 
+# Debug route to verify setup
+@app.route('/ping')
+def ping():
+    return jsonify({"status": "alive", "message": "Backend is running"})
+
 def load_data(file):
-    data = pd.read_csv(file)
-    return data
+    try:
+        data = pd.read_csv(file)
+        return data
+    except Exception as e:
+        print(f"Error loading CSV: {str(e)}")
+        return None
 
 def build_map(data):
     symptom_map = defaultdict(list)
@@ -75,25 +85,21 @@ def predict(matches, symptom_map):
                 illness_details[illness] = illness_info
     return illnesses, illness_details
 
-def format_illness_response(illness, count, info):
-    return {
-        'name': illness,
-        'count': count,
-        'symptoms': info['symptoms'],
-        'severity': info['severity'],
-        'contagious': info['contagious'],
-        'treatment': info['treatment'],
-        'notes': info['notes']
-    }
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         data = request.get_json()
-        user_input = data['symptoms']
+        user_input = data.get('symptoms', '')
         
         try:
             data = load_data('sx.csv')
+            if data is None:
+                return jsonify({
+                    'primary': None,
+                    'secondary': [],
+                    'error': 'Failed to load symptom database'
+                })
+
             symptom_map, known_symptoms, symptom_words = build_map(data)
             user_sx = extract_sx(user_input, known_symptoms, symptom_words)
             
@@ -116,14 +122,18 @@ def index():
                 
             sorted_illnesses = sorted(illnesses.items(), key=lambda x: x[1], reverse=True)
             
-            primary = format_illness_response(
-                sorted_illnesses[0][0],
-                sorted_illnesses[0][1],
-                illness_details[sorted_illnesses[0][0]]
-            )
+            primary = {
+                'name': sorted_illnesses[0][0],
+                'count': sorted_illnesses[0][1],
+                **illness_details[sorted_illnesses[0][0]]
+            }
             
             secondary = [
-                format_illness_response(illness, count, illness_details[illness])
+                {
+                    'name': illness,
+                    'count': count,
+                    **illness_details[illness]
+                }
                 for illness, count in sorted_illnesses[1:]
             ]
             
@@ -140,7 +150,18 @@ def index():
                 'error': f'An error occurred: {str(e)}'
             })
     
-    return render_template('index.html')
+    # GET request - serve the HTML template
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        return f"Error loading template: {str(e)}", 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    print("Starting symptom checker backend...")
+    print(f"Current directory: {os.getcwd()}")
+    print(f"Files in directory: {os.listdir('.')}")
+    if os.path.exists('templates'):
+        print(f"Templates found: {os.listdir('templates')}")
+    else:
+        print("Templates directory missing!")
+    app.run(debug=True, port=5000)
