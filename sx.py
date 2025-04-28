@@ -77,72 +77,81 @@ def match_sx(user_sx, symptom_map):
 # predict illness based on matched symptoms
 def predict(matches, symptom_map):
     illnesses = defaultdict(int)
+    illness_details = {}  # Store all illness info
+    
     for match in matches:
         for illness_info in symptom_map[match]:
             illness = illness_info['illness']
             illnesses[illness] += 1
-    return illnesses
+            # Store details if not already present
+            if illness not in illness_details:
+                illness_details[illness] = illness_info
+    
+    return illnesses, illness_details  # Return both counts and details
 
-# chatbot function
 def chatbot(user_input):
     try:
-        # load dataset
         data = load_data('sx.csv')
-        # build symptom-illness map
         symptom_map, known_symptoms, symptom_words = build_map(data)
-        # extract symptoms from user input
         user_sx = extract_sx(user_input, known_symptoms, symptom_words)
         
         if not user_sx:
-            return 'No symptoms detected. Please describe how you\'re feeling, like "headache and fever".'
+            return {
+                'primary': 'No symptoms detected. Please try again.',
+                'secondary': []
+            }
 
-        # match symptoms
         matches = match_sx(user_sx, symptom_map)
-        # predict illness
-        illnesses = predict(matches, symptom_map)
+        illnesses, illness_details = predict(matches, symptom_map)
         
         if not illnesses:
-            return 'No matching illnesses found. Please try describing your symptoms differently.'
+            return {
+                'primary': 'No matching illnesses found.',
+                'secondary': []
+            }
             
-        # sort illnesses by match count
+        # Sort by match count (descending)
         sorted_illnesses = sorted(illnesses.items(), key=lambda x: x[1], reverse=True)
         
-        # prepare response
-        result_msg = 'Possible conditions based on your symptoms:\n\n'
-        printed_illnesses = set()
+        # Format primary diagnosis
+        primary_illness, primary_count = sorted_illnesses[0]
+        primary_info = illness_details[primary_illness]
+        primary_response = format_illness_response(primary_illness, primary_count, primary_info)
         
-        for illness, count in sorted_illnesses:
-            if illness in printed_illnesses:
-                continue
-                
-            result_msg += f'<strong>{illness}</strong> (matching {count} symptoms)\n'
-            
-            # Find the first matching symptom info for this illness
-            for match in matches:
-                for info in symptom_map[match]:
-                    if info['illness'] == illness:
-                        result_msg += f"  Symptoms: {info['symptoms']}\n"
-                        result_msg += f"  Severity: {info['severity']}\n"
-                        result_msg += f"  Contagious: {info['contagious']}\n"
-                        result_msg += f"  Treatment: {info['treatment']}\n"
-                        result_msg += f"  Notes: {info['notes']}\n\n"
-                        printed_illnesses.add(illness)
-                        break
-                if illness in printed_illnesses:
-                    break
-                    
-        return result_msg
-    
+        # Format secondary diagnoses
+        secondary_responses = []
+        for illness, count in sorted_illnesses[1:]:
+            info = illness_details[illness]
+            secondary_responses.append(format_illness_response(illness, count, info))
+        
+        return {
+            'primary': primary_response,
+            'secondary': secondary_responses
+        }
+        
     except Exception as e:
-        return f"An error occurred: {str(e)}. Please try again later."
+        return {
+            'primary': f"Error: {str(e)}",
+            'secondary': []
+        }
+
+def format_illness_response(illness, count, info):
+    return (
+        f"{illness} (matching {count} symptoms)\n"
+        f"Symptoms: {info['symptoms']}\n"
+        f"Severity: {info['severity']}\n"
+        f"Contagious: {info['contagious']}\n"
+        f"Treatment: {info['treatment']}\n"
+        f"Notes: {info['notes']}"
+    )
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         data = request.get_json()
         user_input = data['symptoms']
-        result_msg = chatbot(user_input)
-        return jsonify({'result': result_msg})
+        result = chatbot(user_input)
+        return jsonify(result)
     return render_template('index.html')
 
 if __name__ == '__main__':
