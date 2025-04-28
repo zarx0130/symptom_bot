@@ -5,7 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Symptom Checker</title>
     <style>
-        /* [All previous CSS styles remain exactly the same] */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .chat-header {
+            background-color: #a02d2d;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        #chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+        .user-message {
+            background-color: #a02d2d;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        .bot-message {
+            background-color: white;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            border-top: 1px solid #eee;
+        }
+        #symptoms {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 20px;
+            background-color: #a02d2d;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .typing-indicator {
+            display: flex;
+            padding: 12px 16px;
+        }
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #777;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            opacity: 0.4;
+        }
+        .typing-indicator span:nth-child(1) {
+            animation: typing 1s infinite;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation: typing 1s infinite 0.2s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation: typing 1s infinite 0.4s;
+        }
+        @keyframes typing {
+            0% { opacity: 0.4; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-3px); }
+            100% { opacity: 0.4; transform: translateY(0); }
+        }
         .diagnosis-card {
             background: white;
             border-radius: 10px;
@@ -17,14 +115,38 @@
             font-weight: bold;
             color: #a02d2d;
             margin-bottom: 10px;
+            font-size: 1.1em;
         }
         .diagnosis-detail {
-            margin: 5px 0;
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+        .show-more-btn {
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            margin-top: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <!-- [Previous HTML structure remains the same until the script] -->
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Symptom Checker</h2>
+        </div>
+        <div id="chat-messages">
+            <div class="message bot-message">
+                Welcome! Please describe your symptoms to get started.
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="symptoms" placeholder="Type your symptoms here...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 
     <script>
         let allPossibleIllnesses = [];
@@ -33,85 +155,92 @@
         function sendMessage() {
             const input = document.getElementById('symptoms');
             const message = input.value.trim();
-            if (message === '') return;
-
-            allPossibleIllnesses = [];
-            shownIllnessCount = 0;
+            if (!message) return;
 
             const chatMessages = document.getElementById('chat-messages');
-            const userMessage = document.createElement('div');
-            userMessage.className = 'message user';
-            userMessage.innerHTML = `<p>${message}</p>`;
-            chatMessages.appendChild(userMessage);
-
+            
+            // Add user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user-message';
+            userDiv.textContent = message;
+            chatMessages.appendChild(userDiv);
+            
+            // Clear input
             input.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'message bot typing-indicator';
-            typingIndicator.innerHTML = `
+            
+            // Add typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message typing-indicator';
+            typingDiv.innerHTML = `
                 <span></span>
                 <span></span>
                 <span></span>
             `;
-            chatMessages.appendChild(typingIndicator);
+            chatMessages.appendChild(typingDiv);
+            
+            // Scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Reset secondary illnesses
+            allPossibleIllnesses = [];
+            shownIllnessCount = 0;
 
+            // Send to backend
             fetch('/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ symptoms: message }),
+                body: JSON.stringify({ symptoms: message })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
             .then(data => {
-                setTimeout(() => {
-                    chatMessages.removeChild(typingIndicator);
-
-                    if (data.error) {
-                        const errorMessage = document.createElement('div');
-                        errorMessage.className = 'message bot';
-                        errorMessage.innerHTML = `<p>${data.error}</p>`;
-                        chatMessages.appendChild(errorMessage);
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                        return;
-                    }
-
-                    // Display primary diagnosis
-                    if (data.primary) {
-                        const primaryMsg = document.createElement('div');
-                        primaryMsg.className = 'message bot';
-                        primaryMsg.innerHTML = createDiagnosisCard(data.primary, true);
-                        chatMessages.appendChild(primaryMsg);
-                    }
-
-                    // Store secondary diagnoses if they exist
-                    if (data.secondary && data.secondary.length > 0) {
-                        allPossibleIllnesses = data.secondary;
-                        
-                        const promptMessage = document.createElement('div');
-                        promptMessage.className = 'message bot';
-                        promptMessage.innerHTML = `
-                            <p>Would you like to see other possible conditions?</p>
-                            <button class="show-more-btn" onclick="showMoreIllnesses()">Show More Options</button>
-                        `;
-                        chatMessages.appendChild(promptMessage);
-                    }
+                // Remove typing indicator
+                chatMessages.removeChild(typingDiv);
+                
+                // Handle errors
+                if (data.error) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'message bot-message';
+                    errorDiv.textContent = data.error;
+                    chatMessages.appendChild(errorDiv);
+                    return;
+                }
+                
+                // Display primary diagnosis
+                if (data.primary) {
+                    const primaryDiv = document.createElement('div');
+                    primaryDiv.className = 'message bot-message';
+                    primaryDiv.innerHTML = createDiagnosisCard(data.primary, true);
+                    chatMessages.appendChild(primaryDiv);
+                }
+                
+                // Store secondary diagnoses if available
+                if (data.secondary && data.secondary.length > 0) {
+                    allPossibleIllnesses = data.secondary;
                     
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 1500);
+                    const promptDiv = document.createElement('div');
+                    promptDiv.className = 'message bot-message';
+                    promptDiv.innerHTML = `
+                        <p>Would you like to see other possible conditions?</p>
+                        <button class="show-more-btn" onclick="showMoreIllnesses()">Show More Options</button>
+                    `;
+                    chatMessages.appendChild(promptDiv);
+                }
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             })
             .catch(error => {
                 console.error('Error:', error);
-                setTimeout(() => {
-                    chatMessages.removeChild(typingIndicator);
-                    const errorMessage = document.createElement('div');
-                    errorMessage.className = 'message bot';
-                    errorMessage.innerHTML = '<p>Sorry, there was an error processing your request.</p>';
-                    chatMessages.appendChild(errorMessage);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 1500);
+                chatMessages.removeChild(typingDiv);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message bot-message';
+                errorDiv.textContent = 'Error connecting to the server. Please try again.';
+                chatMessages.appendChild(errorDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             });
         }
 
@@ -120,7 +249,7 @@
                 <div class="diagnosis-card">
                     <div class="diagnosis-title">
                         ${isPrimary ? 'Most Likely Diagnosis' : 'Possible Diagnosis'} 
-                        (matching ${illness.count} symptoms)
+                        (${illness.count} matching symptoms)
                     </div>
                     <div class="diagnosis-detail"><strong>Condition:</strong> ${illness.name}</div>
                     <div class="diagnosis-detail"><strong>Symptoms:</strong> ${illness.symptoms}</div>
@@ -134,36 +263,40 @@
 
         function showMoreIllnesses() {
             const chatMessages = document.getElementById('chat-messages');
-            const lastMessage = chatMessages.lastChild;
             
+            // Remove the prompt message
+            const lastMessage = chatMessages.lastChild;
             if (lastMessage.querySelector('.show-more-btn')) {
                 chatMessages.removeChild(lastMessage);
             }
             
-            const illnessesToShow = allPossibleIllnesses.slice(shownIllnessCount, shownIllnessCount + 3);
-            shownIllnessCount += illnessesToShow.length;
+            // Show next 3 illnesses
+            const toShow = allPossibleIllnesses.slice(shownIllnessCount, shownIllnessCount + 3);
+            shownIllnessCount += toShow.length;
             
-            illnessesToShow.forEach(illness => {
-                const illnessMessage = document.createElement('div');
-                illnessMessage.className = 'message bot';
-                illnessMessage.innerHTML = createDiagnosisCard(illness, false);
-                chatMessages.appendChild(illnessMessage);
+            toShow.forEach(illness => {
+                const illnessDiv = document.createElement('div');
+                illnessDiv.className = 'message bot-message';
+                illnessDiv.innerHTML = createDiagnosisCard(illness, false);
+                chatMessages.appendChild(illnessDiv);
             });
             
+            // Add show more button if more remain
             if (shownIllnessCount < allPossibleIllnesses.length) {
-                const showMoreBtn = document.createElement('div');
-                showMoreBtn.className = 'message bot';
-                showMoreBtn.innerHTML = `
+                const moreDiv = document.createElement('div');
+                moreDiv.className = 'message bot-message';
+                moreDiv.innerHTML = `
                     <button class="show-more-btn" onclick="showMoreIllnesses()">Show More Options</button>
                 `;
-                chatMessages.appendChild(showMoreBtn);
+                chatMessages.appendChild(moreDiv);
             }
             
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        document.getElementById('symptoms').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
+        // Handle Enter key
+        document.getElementById('symptoms').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
                 sendMessage();
             }
         });
