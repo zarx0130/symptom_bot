@@ -1,4 +1,3 @@
-
 Illness,Symptoms,Severity,Contagious,Treatment,Notes
 Allergies,"Sneezing, runny nose, itchy eyes, skin rash, tickly nose, watery eyes, skin irritation, feeling sniffly, throat scratchiness",Mild,No,"Antihistamines, avoid triggers",May be seasonal or food-related
 Anemia,"Fatigue, pale skin, dizziness, shortness of breath, tired all the time, looking pale, lightheadedness, getting winded easily, weak feeling",Mild to Severe,No,"Iron supplements, dietary changes",Commonly caused by iron deficiency
@@ -6,41 +5,40 @@ Appendicitis,"Abdominal pain (lower right), nausea, fever, belly ache that won't
 Arthritis (Osteo),"Joint pain, stiffness, reduced range of motion, joints acting up, morning stiffness, aches when weather changes, creaky joints",Moderate,No,"Pain relievers, physical therapy",Chronic condition
 Asthma,"Shortness of breath, wheezing, chest tightness, can't catch breath, chest feels tight, whistling sound when breathing, coughing fits",Mild to Severe,No,"Inhalers, steroids","Triggered by allergens, exercise, or stress"
 Bipolar Disorder,"Mood swings, depression, mania, up and down moods, can't sleep but full of energy, then hopelessness, racing thoughts",Severe,No,"Mood stabilizers, therapy",Chronic mental health condition
-Bronchitis,"Cough (mucus), chest discomfort, fatigue, hacking cough, chest feels heavy, worn out, sometimes brings up gunk",Mild to Severe,Sometimes,"Rest, fluids, cough medicine",Acute cases often resolve in weeks
-Celiac Disease,"Bloating, diarrhea, fatigue, weight loss, upset stomach after eating, always running to bathroom, nutrient deficiencies",Mild to Severe,No,Gluten-free diet,Autoimmune reaction to gluten
-Chickenpox,"Rash, fever, itching, fatigue, itchy spots everywhere, feeling feverish, restless sleep, little blisters",Mild,Yes,"Antihistamines, antiviral meds",Preventable by vaccine
-Chronic Fatigue Syndrome,"Severe fatigue, muscle pain, sleep disturbances, always exhausted no matter what, body aches like the flu, brain fog",Moderate,No,"Lifestyle changes, supportive care",Exact cause unknown
+Bronchitis,"Cough, chest discomfort, fatigue, persistent cough, chest feels heavy, worn out, chest congestion",Mild to Severe,Sometimes,"Rest, fluids, cough medicine",Acute cases often resolve in weeks
+Celiac Disease,"Bloating, fatigue, weight loss, upset stomach after eating, nutrient deficiencies, always feeling unwell after meals",Mild to Severe,No,Gluten-free diet,Autoimmune reaction to gluten
+Chronic Fatigue Syndrome,"Severe fatigue, muscle pain, sleep disturbances, always exhausted no matter what, body aches, brain fog",Moderate,No,"Lifestyle changes, supportive care",Exact cause unknown
 Cold,"Sneezing, sore throat, runny nose, cough, nose won't stop running, throat feels raw, head feels stuffed, general blah feeling",Mild,Yes,"Rest, fluids, decongestants",Caused by viral infections
-Conjunctivitis (Pink Eye),"Red, itchy eyes, discharge, swelling, eyes glued shut in morning, pink angry eyes, sandy feeling, goopy discharge",Mild,Yes,"Eye drops, hygiene practices",Viral or bacterial
-Crohn’s Disease,"Abdominal pain, diarrhea, weight loss, fatigue, gut always hurting, urgent bathroom trips, never hungry but losing weight",Severe,No,"Anti-inflammatory meds, diet changes",Chronic inflammatory bowel disease
-Dengue Fever,"High fever, severe headaches, joint/muscle pain, burning up with fever, whole body hurts, pounding headache, feels like bones breaking",Severe,No,"Fluids, pain relievers",Spread by mosquito bites
+Conjunctivitis (Pink Eye),"Red, itchy eyes, swelling, eyes irritated in morning, pink appearance, sandy feeling, eye discomfort",Mild,Yes,"Eye drops, hygiene practices",Viral or bacterial
+Crohn’s Disease,"Abdominal pain, diarrhea, weight loss, fatigue, gut discomfort, urgent bathroom trips, never hungry but losing weight",Severe,No,"Anti-inflammatory meds, diet changes",Chronic inflammatory bowel disease
 Depression,"Persistent sadness, fatigue, loss of interest, can't get out of bed, nothing brings joy, everything feels heavy, hard to concentrate",Mild to Severe,No,"Therapy, antidepressants",Can affect physical and mental health
 Diabetes Type 1,"Increased thirst, frequent urination, fatigue, always thirsty, peeing constantly, sudden weight drop, shaky feeling",Severe,No,"Insulin therapy, diet management",Autoimmune disease
 Diabetes Type 2,"Fatigue, slow healing, increased hunger/thirst, slow healing cuts, always hungry/thirsty, tingling in hands/feet, blurry vision",Mild to Severe,No,"Lifestyle changes, medication",Often linked to obesity
-Eczema,"Dry, itchy skin, rashes, skin won't stop itching, red angry patches, dry flaky skin, sensitive to everything",Mild to Moderate,No,"Moisturizers, topical steroids",Chronic skin condition
+Eczema,"Dry, itchy skin, rashes, skin irritation, red patches, dry flaky skin, sensitive skin",Mild to Moderate,No,"Moisturizers, topical steroids",Chronic skin condition
 Epilepsy,"Seizures, confusion, loss of consciousness, spacing out episodes, sudden jerking movements, waking up confused with sore muscles",Varies,No,"Anti-epileptic drugs, surgery",Chronic neurological condition
-Flu (Influenza),"Fever, cough, body aches, fatigue, hit by a truck feeling, chills then sweating, cough that hurts, too weak to move",Moderate,Yes,"Antiviral meds, rest",Preventable by vaccine
-Gallstones,"Abdominal pain, nausea, vomiting, stabbing pain after eating, feeling queasy, pain between shoulder blades",Moderate,No,Surgery (gallbladder removal),May cause complications if untreated
-GERD (Acid Reflux),"Heartburn, regurgitation, chest discomfort, burning in chest, sour taste in mouth, feeling food come back up, nighttime coughing",Mild to Moderate,No,"Antacids, lifestyle changes",Common digestive disorder
-Glaucoma,"Vision loss, eye pain, halos around lights, tunnel vision, sudden eye pain with nausea, rainbow halos around lights",Severe,No,"Eye drops, surgery",Leading cause of blindness if untreated
-Gout,"Intense joint pain (big toe), redness, swelling, big toe on fire, joint so swollen it's shiny, can't bear weight on foot",Severe,No,"Anti-inflammatory drugs, lifestyle changes",A type of arthritis caused by uric acid buildup
+Flu (Influenza),"Fever, cough, body aches, fatigue, chills, sweating, cough that hurts, too weak to move",Moderate,Yes,"Antiviral meds, rest",Preventable by vaccine
+GERD (Acid Reflux),"Heartburn, regurgitation, chest discomfort, burning in chest, sour taste in mouth, nighttime coughing",Mild to Moderate,No,"Antacids, lifestyle changes",Common digestive disorder
+Glaucoma,"Vision loss, eye pain, halos around lights, tunnel vision, sudden eye pain with nausea",Severe,No,"Eye drops, surgery",Leading cause of blindness if untreated
+Gout,"Intense joint pain (big toe), redness, swelling, joint discomfort, can't bear weight on foot",Severe,No,"Anti-inflammatory drugs, lifestyle changes",A type of arthritis
 Hay Fever (Allergic Rhinitis),"Sneezing, runny nose, itchy eyes, congestion, nose like a faucet, eyes won't stop itching, constant throat clearing",Mild,No,"Antihistamines, decongestants",Seasonal allergy
-Hepatitis A,"Fatigue, abdominal pain, jaundice, nausea, yellowish skin/eyes, no appetite, dark pee, tired and achy all over",Moderate,Yes,"Supportive care, rest",Spread via contaminated food/water
-Hepatitis B,"Fatigue, dark urine, jaundice, joint pain, exhausted but can't sleep, tea-colored urine, joints stiff and painful",Moderate to Severe,Yes,"Antivirals, supportive care",Preventable by vaccine
-Hyperthyroidism,"Weight loss, rapid heartbeat, sweating, heart racing for no reason, sweating buckets, shaky hands, pants getting loose",Moderate,No,"Antithyroid meds, radioactive iodine",Overactive thyroid gland
-Hypothyroidism,"Fatigue, weight gain, cold intolerance, always cold, hair falling out, can't lose weight no matter what, sluggish bowels",Mild to Severe,No,Thyroid hormone replacement,Underactive thyroid gland
-IBS (Irritable Bowel Syndrome),"Abdominal cramps, bloating, diarrhea, or constipation, stomach in knots, unpredictable bathroom trips, gassy and bloated",Mild to Moderate,No,"Diet changes, stress management",Functional gastrointestinal disorder
-Kidney Stones,"Severe back/side pain, nausea, blood in urine, worst pain ever in back/side, can't find comfortable position, pee looks weird",Severe,No,"Pain relievers, hydration, surgery",Stones may pass naturally or need removal
-Lupus (SLE),"Fatigue, joint pain, rashes, fever, butterfly rash on face, joints swollen and achy, sun makes everything worse",Moderate to Severe,No,"Immunosuppressants, steroids",Autoimmune condition
-Meningitis,"Fever, stiff neck, headache, nausea, can't touch chin to chest, light hurts eyes, fever with purple spots",Severe,Yes,"Antibiotics (bacterial), rest",Can be bacterial or viral; life-threatening
-Obesity,"Weight gain, fatigue, joint pain, difficulty breathing, clothes not fitting anymore, out of breath tying shoes, knees always hurting",Chronic,No,"Lifestyle changes, surgery",Risk factor for many chronic illnesses
-Parkinson’s Disease,"Tremors, slow movement, rigidity, balance issues, hands shaking at rest, shuffling steps, face not showing expression",Severe,No,"Medications, physical therapy",Progressive neurodegenerative condition
-Pneumonia,"Fever, cough, chest pain, difficulty breathing, cough that won't quit, fever with chills, ribs hurt from coughing",Severe,Yes,"Antibiotics, supportive care","Often bacterial, can be life-threatening"
-Seasonal Affective Disorder,"Depression, fatigue, loss of interest, winter blues, carb cravings, sleeping too much but still tired",Mild to Moderate,No,"Light therapy, antidepressants",Linked to reduced sunlight exposure
-Sickle Cell Anemia,"Pain episodes, fatigue, swelling, pain crises like being stabbed, swelling in hands/feet, always tired",Severe,No,"Pain management, blood transfusions",Genetic blood disorder
-Sinusitis,"Facial pain, nasal congestion, headache, face feels pressurized, teeth hurt but dentist says they're fine, green gunk",Mild,No,"Decongestants, saline spray",Often caused by viral infections
-Tetanus,"Muscle stiffness, difficulty swallowing, spasms, jaw locking up, muscles spasming painfully, trouble swallowing",Severe,No,"Tetanus immunoglobulin, antibiotics",Preventable by vaccination
-Ulcerative Colitis,"Abdominal pain, bloody diarrhea, weight loss, blood in stool, urgent diarrhea, stomach cramps that come and go",Severe,No,"Anti-inflammatory meds, surgery",Chronic inflammatory bowel disease
-Vertigo,"Dizziness, spinning sensation, nausea, room spinning when lying down, nausea when moving head, unsteady like being drunk",Mild to Severe,No,"Vestibular rehab, medications",Often caused by inner ear issues
-Whooping Cough (Pertussis),"Severe coughing fits, vomiting, exhaustion, coughing until vomiting, gasping for air between coughs, ribs sore",Severe,Yes,"Antibiotics, supportive care",Preventable by vaccine
-Zika Virus,"Fever, rash, joint pain, conjunctivitis, mild fever with rash, red eyes without discharge, achy all over",Mild to Moderate,Yes,Supportive care,Spread by mosquito bites
+Hyperthyroidism,"Weight loss, rapid heartbeat, sweating, heart racing for no reason, shaky hands, pants getting loose",Moderate,No,"Antithyroid meds, radioactive iodine",Overactive thyroid gland
+Hypothyroidism,"Fatigue, weight gain, cold intolerance, always cold, hair falling out, can't lose weight no matter what",Mild to Severe,No,Thyroid hormone replacement,Underactive thyroid gland
+IBS (Irritable Bowel Syndrome),"Abdominal cramps, bloating, diarrhea, or constipation, stomach discomfort, unpredictable digestion",Mild to Moderate,No,"Diet changes, stress management",Functional gastrointestinal disorder
+Kidney Stones,"Severe back/side pain, nausea, blood in urine, discomfort in back/side, can't find comfortable position",Severe,No,"Pain relievers, hydration, surgery",Stones may pass naturally or need removal
+Lupus (SLE),"Fatigue, joint pain, rashes, fever, butterfly rash on face, joints swollen and achy, sun sensitivity",Moderate to Severe,No,"Immunosuppressants, steroids",Autoimmune condition
+Migraine,"Severe headache, nausea, light sensitivity, pounding head pain, can't stand light/sound, vision changes",Moderate to Severe,No,"Pain relievers, preventive meds",Neurological condition
+Mononucleosis,"Fatigue, sore throat, fever, swollen lymph nodes, extreme tiredness, persistent sore throat",Moderate,Yes,"Rest, fluids",Often called "kissing disease"
+Osteoporosis,"Bone pain, loss of height, fractures, back pain, stooped posture, easily broken bones",Moderate to Severe,No,"Calcium supplements, exercise",Bone weakening condition
+Pneumonia,"Fever, cough, chest pain, difficulty breathing, persistent cough, fever with chills",Severe,Yes,"Antibiotics, supportive care","Often bacterial, can be life-threatening"
+Psoriasis,"Scaly skin patches, itching, dry skin, red patches with silvery scales, skin irritation",Mild to Moderate,No,"Topical treatments, light therapy",Autoimmune skin condition
+Restless Legs Syndrome,"Uncomfortable leg sensations, urge to move legs, worse at night, can't keep legs still when resting",Mild to Moderate,No,"Lifestyle changes, medications",Neurological sensorimotor disorder
+Rosacea,"Facial redness, visible blood vessels, skin sensitivity, flushed appearance, irritated facial skin",Mild,No,"Topical treatments, laser therapy",Chronic skin condition
+Sciatica,"Leg pain, lower back pain, hip pain, shooting leg pain, numbness in leg, pain when sitting",Moderate to Severe,No,"Physical therapy, pain management",Nerve-related pain
+Shingles,"Painful rash, burning sensation, sensitivity to touch, blistering rash, nerve pain",Moderate to Severe,Yes,"Antiviral meds, pain relievers",Caused by chickenpox virus reactivation
+Sleep Apnea,"Loud snoring, daytime sleepiness, gasping during sleep, morning headaches, always tired despite sleeping",Moderate to Severe,No,"CPAP machine, lifestyle changes",Breathing interruptions during sleep
+Temporomandibular Disorder (TMD),"Jaw pain, clicking sounds, difficulty chewing, jaw stiffness, headaches from jaw tension",Mild to Moderate,No,"Mouth guards, physical therapy",Jaw joint dysfunction
+Tennis Elbow,"Elbow pain, forearm tenderness, weak grip, pain when shaking hands or turning doorknob",Mild to Moderate,No,"Rest, physical therapy",Overuse injury
+Tinnitus,"Ringing in ears, buzzing sounds, phantom noises, constant ear ringing",Mild to Moderate,No,"Sound therapy, management techniques",Perception of sound without external source
+Urinary Tract Infection,"Painful urination, frequent urination, pelvic pain, burning sensation, urgent need to urinate",Mild to Moderate,No,"Antibiotics, hydration",Common bacterial infection
+Varicose Veins,"Swollen veins, leg pain, heaviness in legs, visible twisted veins, achy legs",Mild to Moderate,No,"Compression stockings, elevation",Vein circulation issue
+Vitiligo,"Skin depigmentation, white patches, loss of skin color, uneven skin tone",Mild,No,"Topical treatments, light therapy",Autoimmune skin condition
