@@ -164,6 +164,31 @@ body {
     100% { opacity: 0.4; transform: translateY(0); }
 }
 
+.matching-count {
+    color: #777;
+    font-style: italic;
+    font-size: 0.9rem;
+    margin: 10px 0 5px 0;
+    text-align: center;
+}
+
+.typing-message {
+    color: #777;
+    font-style: italic;
+    font-size: 0.9rem;
+    padding: 8px 15px;
+    background-color: #f1f1f1;
+    border-radius: 15px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.illness-group {
+    margin-bottom: 20px;
+    border-left: 3px solid #ddd;
+    padding-left: 10px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .chat-container {
