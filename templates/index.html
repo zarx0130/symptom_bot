@@ -38,19 +38,21 @@
         .message {
             margin-bottom: 15px;
             max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 18px;
             line-height: 1.5;
         }
         .user-message {
             background-color: #a02d2d;
             color: white;
             margin-left: auto;
+            padding: 12px 16px;
+            border-radius: 18px;
             border-bottom-right-radius: 5px;
         }
         .bot-message {
             background-color: white;
             margin-right: auto;
+            padding: 12px 16px;
+            border-radius: 18px;
             border-bottom-left-radius: 5px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
@@ -79,7 +81,9 @@
         }
         .typing-indicator {
             display: flex;
-            padding: 12px 16px;
+            gap: 4px;
+            height: 8px;
+            align-items: center;
         }
         .typing-indicator span {
             height: 8px;
@@ -87,7 +91,6 @@
             background-color: #777;
             border-radius: 50%;
             display: inline-block;
-            margin: 0 2px;
             opacity: 0.4;
         }
         .typing-indicator span:nth-child(1) {
@@ -103,13 +106,6 @@
             0% { opacity: 0.4; transform: translateY(0); }
             50% { opacity: 1; transform: translateY(-3px); }
             100% { opacity: 0.4; transform: translateY(0); }
-        }
-        .diagnosis-card {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .diagnosis-title {
             font-weight: bold;
@@ -168,7 +164,7 @@
             // Clear input
             input.value = '';
             
-            // Add typing indicator
+            // Add typing indicator (just the dots)
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message bot-message typing-indicator';
             typingDiv.innerHTML = `
@@ -185,6 +181,12 @@
             allPossibleIllnesses = [];
             shownIllnessCount = 0;
 
+            // Add minimum delay to simulate thinking
+            const minDelay = 1500; // 1.5 seconds minimum delay
+            
+            // Start timing for minimum delay
+            const startTime = Date.now();
+
             // Send to backend
             fetch('/', {
                 method: 'POST',
@@ -198,8 +200,22 @@
                 return response.json();
             })
             .then(data => {
+                // Calculate remaining time for minimum delay
+                const elapsed = Date.now() - startTime;
+                const remainingDelay = Math.max(0, minDelay - elapsed);
+                
+                // Wait for remaining delay before processing response
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve(data);
+                    }, remainingDelay);
+                });
+            })
+            .then(data => {
                 // Remove typing indicator
-                chatMessages.removeChild(typingDiv);
+                if (typingDiv.parentNode) {
+                    chatMessages.removeChild(typingDiv);
+                }
                 
                 // Handle errors
                 if (data.error) {
@@ -214,7 +230,17 @@
                 if (data.primary) {
                     const primaryDiv = document.createElement('div');
                     primaryDiv.className = 'message bot-message';
-                    primaryDiv.innerHTML = createDiagnosisCard(data.primary, true);
+                    primaryDiv.innerHTML = `
+                        <div class="diagnosis-title">
+                            Most Likely Diagnosis (${data.primary.count} matching symptoms)
+                        </div>
+                        <div class="diagnosis-detail"><strong>Condition:</strong> ${data.primary.name}</div>
+                        <div class="diagnosis-detail"><strong>Symptoms:</strong> ${data.primary.symptoms}</div>
+                        <div class="diagnosis-detail"><strong>Severity:</strong> ${data.primary.severity}</div>
+                        <div class="diagnosis-detail"><strong>Contagious:</strong> ${data.primary.contagious}</div>
+                        <div class="diagnosis-detail"><strong>Treatment:</strong> ${data.primary.treatment}</div>
+                        <div class="diagnosis-detail"><strong>Notes:</strong> ${data.primary.notes}</div>
+                    `;
                     chatMessages.appendChild(primaryDiv);
                 }
                 
@@ -235,30 +261,15 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                chatMessages.removeChild(typingDiv);
+                if (typingDiv.parentNode) {
+                    chatMessages.removeChild(typingDiv);
+                }
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'message bot-message';
                 errorDiv.textContent = 'Error connecting to the server. Please try again.';
                 chatMessages.appendChild(errorDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             });
-        }
-
-        function createDiagnosisCard(illness, isPrimary) {
-            return `
-                <div class="diagnosis-card">
-                    <div class="diagnosis-title">
-                        ${isPrimary ? 'Most Likely Diagnosis' : 'Possible Diagnosis'} 
-                        (${illness.count} matching symptoms)
-                    </div>
-                    <div class="diagnosis-detail"><strong>Condition:</strong> ${illness.name}</div>
-                    <div class="diagnosis-detail"><strong>Symptoms:</strong> ${illness.symptoms}</div>
-                    <div class="diagnosis-detail"><strong>Severity:</strong> ${illness.severity}</div>
-                    <div class="diagnosis-detail"><strong>Contagious:</strong> ${illness.contagious}</div>
-                    <div class="diagnosis-detail"><strong>Treatment:</strong> ${illness.treatment}</div>
-                    <div class="diagnosis-detail"><strong>Notes:</strong> ${illness.notes}</div>
-                </div>
-            `;
         }
 
         function showMoreIllnesses() {
@@ -274,24 +285,49 @@
             const toShow = allPossibleIllnesses.slice(shownIllnessCount, shownIllnessCount + 1);
             shownIllnessCount += toShow.length;
             
-            toShow.forEach(illness => {
-                const illnessDiv = document.createElement('div');
-                illnessDiv.className = 'message bot-message';
-                illnessDiv.innerHTML = createDiagnosisCard(illness, false);
-                chatMessages.appendChild(illnessDiv);
-            });
+            // Add typing indicator (just the dots)
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message typing-indicator';
+            typingDiv.innerHTML = `
+                <span></span>
+                <span></span>
+                <span></span>
+            `;
+            chatMessages.appendChild(typingDiv);
             
-            // Add show more button if more remain
-            if (shownIllnessCount < allPossibleIllnesses.length) {
-                const moreDiv = document.createElement('div');
-                moreDiv.className = 'message bot-message';
-                moreDiv.innerHTML = `
-                    <button class="show-more-btn" onclick="showMoreIllnesses()">Show More Options</button>
-                `;
-                chatMessages.appendChild(moreDiv);
-            }
-            
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            // Simulate delay before showing results
+            setTimeout(() => {
+                chatMessages.removeChild(typingDiv);
+                
+                toShow.forEach(illness => {
+                    const illnessDiv = document.createElement('div');
+                    illnessDiv.className = 'message bot-message';
+                    illnessDiv.innerHTML = `
+                        <div class="diagnosis-title">
+                            Possible Diagnosis (${illness.count} matching symptoms)
+                        </div>
+                        <div class="diagnosis-detail"><strong>Condition:</strong> ${illness.name}</div>
+                        <div class="diagnosis-detail"><strong>Symptoms:</strong> ${illness.symptoms}</div>
+                        <div class="diagnosis-detail"><strong>Severity:</strong> ${illness.severity}</div>
+                        <div class="diagnosis-detail"><strong>Contagious:</strong> ${illness.contagious}</div>
+                        <div class="diagnosis-detail"><strong>Treatment:</strong> ${illness.treatment}</div>
+                        <div class="diagnosis-detail"><strong>Notes:</strong> ${illness.notes}</div>
+                    `;
+                    chatMessages.appendChild(illnessDiv);
+                });
+                
+                // Add show more button if more remain
+                if (shownIllnessCount < allPossibleIllnesses.length) {
+                    const moreDiv = document.createElement('div');
+                    moreDiv.className = 'message bot-message';
+                    moreDiv.innerHTML = `
+                        <button class="show-more-btn" onclick="showMoreIllnesses()">Show More Options</button>
+                    `;
+                    chatMessages.appendChild(moreDiv);
+                }
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000); // 1 second delay
         }
 
         // Handle Enter key
