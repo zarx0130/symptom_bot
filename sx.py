@@ -8,11 +8,6 @@ import os
 
 app = Flask(__name__)
 
-# Debug route to verify setup
-@app.route('/ping')
-def ping():
-    return jsonify({"status": "alive", "message": "Backend is running"})
-
 def load_data(file):
     try:
         data = pd.read_csv(file)
@@ -149,12 +144,6 @@ def index():
                 'secondary': [],
                 'error': f'An error occurred: {str(e)}'
             })
-    
-    # GET request - serve the HTML template
-    try:
-        return render_template('index.html')
-    except Exception as e:
-        return f"Error loading template: {str(e)}", 500
 
 if __name__ == '__main__':
     print("Starting symptom checker backend...")

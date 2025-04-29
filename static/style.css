@@ -1,3 +1,4 @@
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f0f2f5;
@@ -114,23 +115,6 @@ body {
     border-bottom-left-radius: 3px;
 }
 
-/* Severity color coding */
-.severity-low {
-    color: #2e7d32; /* Green */
-    font-weight: 600;
-}
-
-.severity-medium {
-    color: #f9a825; /* Yellow/Orange */
-    font-weight: 600;
-}
-
-.severity-high {
-    color: #c62828; /* Red */
-    font-weight: 600;
-}
-
-/* Loading animation */
 .typing-indicator {
     display: flex;
     padding: 12px 18px;
@@ -189,7 +173,6 @@ body {
     padding-left: 10px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .chat-container {
         width: 100%;

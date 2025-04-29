@@ -155,16 +155,16 @@
 
             const chatMessages = document.getElementById('chat-messages');
             
-            // Add user message
+            // add user msg 
             const userDiv = document.createElement('div');
             userDiv.className = 'message user-message';
             userDiv.textContent = message;
             chatMessages.appendChild(userDiv);
             
-            // Clear input
+            // clear input
             input.value = '';
             
-            // Add typing indicator (just the dots)
+            // typing indicator
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message bot-message typing-indicator';
             typingDiv.innerHTML = `
@@ -174,20 +174,19 @@
             `;
             chatMessages.appendChild(typingDiv);
             
-            // Scroll to bottom
+            // scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
-            // Reset secondary illnesses
+            // reset secondary illnesses
             allPossibleIllnesses = [];
             shownIllnessCount = 0;
 
-            // Add minimum delay to simulate thinking
-            const minDelay = 1500; // 1.5 seconds minimum delay
-            
-            // Start timing for minimum delay
+            // 1.5 sec delay
+            const minDelay = 1500;
+            // start timing for minimum delay
             const startTime = Date.now();
 
-            // Send to backend
+            // send to backend
             fetch('/', {
                 method: 'POST',
                 headers: {
@@ -200,11 +199,10 @@
                 return response.json();
             })
             .then(data => {
-                // Calculate remaining time for minimum delay
+                // calculate remaining time for min delay
                 const elapsed = Date.now() - startTime;
                 const remainingDelay = Math.max(0, minDelay - elapsed);
                 
-                // Wait for remaining delay before processing response
                 return new Promise(resolve => {
                     setTimeout(() => {
                         resolve(data);
@@ -212,12 +210,12 @@
                 });
             })
             .then(data => {
-                // Remove typing indicator
+                // remove typing indicator
                 if (typingDiv.parentNode) {
                     chatMessages.removeChild(typingDiv);
                 }
                 
-                // Handle errors
+                // handle errors
                 if (data.error) {
                     const errorDiv = document.createElement('div');
                     errorDiv.className = 'message bot-message';
@@ -226,7 +224,7 @@
                     return;
                 }
                 
-                // Display primary diagnosis
+                // primary diagnosis
                 if (data.primary) {
                     const primaryDiv = document.createElement('div');
                     primaryDiv.className = 'message bot-message';
@@ -244,7 +242,7 @@
                     chatMessages.appendChild(primaryDiv);
                 }
                 
-                // Store secondary diagnoses if available
+                // secondary diagnoses
                 if (data.secondary && data.secondary.length > 0) {
                     allPossibleIllnesses = data.secondary;
                     
@@ -256,7 +254,6 @@
                     `;
                     chatMessages.appendChild(promptDiv);
                 }
-                
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             })
             .catch(error => {
@@ -275,17 +272,16 @@
         function showMoreIllnesses() {
             const chatMessages = document.getElementById('chat-messages');
             
-            // Remove the prompt message
+            // remove prompt message
             const lastMessage = chatMessages.lastChild;
             if (lastMessage.querySelector('.show-more-btn')) {
                 chatMessages.removeChild(lastMessage);
             }
             
-            // Show next 3 illnesses
+            // next illnesses
             const toShow = allPossibleIllnesses.slice(shownIllnessCount, shownIllnessCount + 1);
             shownIllnessCount += toShow.length;
             
-            // Add typing indicator (just the dots)
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message bot-message typing-indicator';
             typingDiv.innerHTML = `
@@ -295,7 +291,7 @@
             `;
             chatMessages.appendChild(typingDiv);
             
-            // Simulate delay before showing results
+            // simulate delay before showing results
             setTimeout(() => {
                 chatMessages.removeChild(typingDiv);
                 
@@ -316,7 +312,7 @@
                     chatMessages.appendChild(illnessDiv);
                 });
                 
-                // Add show more button if more remain
+                // add show more button if more 
                 if (shownIllnessCount < allPossibleIllnesses.length) {
                     const moreDiv = document.createElement('div');
                     moreDiv.className = 'message bot-message';
@@ -327,10 +323,10 @@
                 }
                 
                 chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 1000); // 1 second delay
+            }, 1000); // 1 sec delay
         }
 
-        // Handle Enter key
+        // handle enter key
         document.getElementById('symptoms').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 sendMessage();
