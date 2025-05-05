@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__)
 
-# Debug route to verify setup
+# debug route 
 @app.route('/ping')
 def ping():
     return jsonify({"status": "alive", "message": "Backend is running"})
@@ -150,7 +150,7 @@ def index():
                 'error': f'An error occurred: {str(e)}'
             })
     
-    # GET request - serve the HTML template
+    # GET request
     try:
         return render_template('index.html')
     except Exception as e:
