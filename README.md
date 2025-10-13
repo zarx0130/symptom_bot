@@ -1,1 +1,1 @@
-# sx_bot
+# symptom_bot
